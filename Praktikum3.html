@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Prakiraan Cuaca 3 Hari - Klojen</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            text-align: center;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        th {
+            background-color: #f0f0f0;
+        }
+        caption {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: gray;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+<table>
+    <caption>Prakiraan Cuaca 3 Hari</caption>
+    <thead>
+        <tr>
+            <th>Tanggal</th>
+            <th>Suhu Maks (°C)</th>
+            <th>Suhu Min (°C)</th>
+            <th>Curah Hujan (mm)</th>
+            <th>Probabilitas Hujan (%)</th>
+        </tr>
+    </thead>
+    <tbody id="cuaca-data">
+        <tr><td colspan="5">Memuat data...</td></tr>
+    </tbody>
+</table>
+
+<footer>
+    Dibuat Anastasia Dai Werang- Integrasi API OpenMeteo 2025
+</footer>
+
+<script>
+    const urlAPI = "https://api.open-meteo.com/v1/forecast?latitude=-7.973&longitude=112.6087&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_mean&timezone=Asia%2FBangkok&forecast_days=3";
+
+    fetch(urlAPI)
+        .then(respon => respon.json())
+        .then(data => {
+            const tanggal = data.daily.time;
+            const suhuMaks = data.daily.temperature_2m_max;
+            const suhuMin = data.daily.temperature_2m_min;
+            const curahHujan = data.daily.precipitation_sum;
+            const probabilitasHujan = data.daily.precipitation_probability_mean;
+
+            let isiTabel = '';
+            for (let i = 0; i < tanggal.length; i++) {
+                isiTabel += `
+                    <tr>
+                        <td>${tanggal[i]}</td>
+                        <td>${suhuMaks[i]}</td>
+                        <td>${suhuMin[i]}</td>
+                        <td>${curahHujan[i]}</td>
+                        <td>${probabilitasHujan[i]}</td>
+                    </tr>
+                `;
+            }
+
+            document.getElementById("cuaca-data").innerHTML = isiTabel;
+        })
+        .catch(error => {
+            console.error("Terjadi kesalahan:", error);
+            document.getElementById("cuaca-data").innerHTML = "<tr><td colspan='5'>Gagal memuat data cuaca.</td></tr>";
+        });
+</script>
+
+</body>
+</html>
